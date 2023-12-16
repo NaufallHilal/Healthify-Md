@@ -1,9 +1,10 @@
-package com.naufalhilal.healthifyapp.data.entities
+package com.naufalhilal.healthifyapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "health_data",
@@ -15,7 +16,7 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ], indices = [Index("user_id")]
 )
 data class HealthData(
     @PrimaryKey(autoGenerate = true)

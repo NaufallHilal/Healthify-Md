@@ -1,4 +1,4 @@
-package com.naufalhilal.healthifyapp.data.entities
+package com.naufalhilal.healthifyapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

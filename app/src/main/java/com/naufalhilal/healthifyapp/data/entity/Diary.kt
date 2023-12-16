@@ -1,9 +1,10 @@
-package com.naufalhilal.healthifyapp.data.entities
+package com.naufalhilal.healthifyapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import androidx.room.Index
 import java.util.Date
 
 @Entity(
@@ -16,7 +17,7 @@ import java.util.Date
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ], indices = [Index("user_id")]
 )
 data class Diary(
     @PrimaryKey(autoGenerate = true)

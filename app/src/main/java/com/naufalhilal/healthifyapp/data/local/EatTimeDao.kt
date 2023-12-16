@@ -5,8 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.naufalhilal.healthifyapp.data.entities.Diary
-import com.naufalhilal.healthifyapp.data.entities.EatTime
+import com.naufalhilal.healthifyapp.data.entity.EatTime
 
 @Dao
 interface EatTimeDao {

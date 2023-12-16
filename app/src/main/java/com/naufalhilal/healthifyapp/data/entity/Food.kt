@@ -1,9 +1,10 @@
-package com.naufalhilal.healthifyapp.data.entities
+package com.naufalhilal.healthifyapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "foods",
@@ -15,7 +16,7 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ], indices = [Index("user_id")]
 )
 data class Food(
     @PrimaryKey(autoGenerate = true)
@@ -34,5 +35,8 @@ data class Food(
     val carbohydrate: Float,
 
     @ColumnInfo(name = "fat")
-    val fat: Float
+    val fat: Float,
+
+    @ColumnInfo(name = "food_name")
+    val food_name: String
 )

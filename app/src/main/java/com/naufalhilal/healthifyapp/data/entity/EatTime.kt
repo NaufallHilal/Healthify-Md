@@ -1,8 +1,9 @@
-package com.naufalhilal.healthifyapp.data.entities
+package com.naufalhilal.healthifyapp.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -22,7 +23,8 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("diary_id"), Index("food_id")]
 )
 data class EatTime(
     @PrimaryKey(autoGenerate = true)
