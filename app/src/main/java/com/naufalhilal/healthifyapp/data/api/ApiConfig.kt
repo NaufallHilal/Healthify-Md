@@ -1,6 +1,7 @@
 package com.naufalhilal.healthifyapp.data.api
 
 import com.naufalhilal.healthifyapp.BuildConfig
+import com.naufalhilal.healthifyapp.BuildConfig.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,27 +9,28 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
 
-    private const val BASE_URL = "https://healthify-mysql-api-i74k6wvjwq-et.a.run.app/"
+    var API_BASE_URL_MOCK: String? = null
 
     fun getApiService(): ApiService {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        val loggingInterceptor = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+        } else {
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.NONE
+            }
         }
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .apply {
-                // Uncomment the following line if you have a TokenInterceptor
-                // addInterceptor(TokenInterceptor())
-            }
             .build()
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+        return Retrofit.Builder()
+            .baseUrl(API_BASE_URL_MOCK ?: BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-
-        return retrofit.create(ApiService::class.java)
+            .create(ApiService::class.java)
     }
 }

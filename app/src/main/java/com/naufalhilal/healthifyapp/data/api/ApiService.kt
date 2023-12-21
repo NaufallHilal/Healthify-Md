@@ -1,11 +1,19 @@
 package com.naufalhilal.healthifyapp.data.api
 
-import com.naufalhilal.healthifyapp.data.entity.Diary
-import com.naufalhilal.healthifyapp.data.entity.EatTime
-import com.naufalhilal.healthifyapp.data.entity.Food
-import com.naufalhilal.healthifyapp.data.entity.HealthData
-import com.naufalhilal.healthifyapp.data.entity.User
-import retrofit2.Response
+import com.naufalhilal.healthifyapp.data.local.entity.Diary
+import com.naufalhilal.healthifyapp.data.local.entity.EatTime
+import com.naufalhilal.healthifyapp.data.local.entity.Food
+import com.naufalhilal.healthifyapp.data.local.entity.HealthData
+import com.naufalhilal.healthifyapp.data.model.AddToDiaryRequest
+import com.naufalhilal.healthifyapp.data.model.CaloriePredictionRequest
+import com.naufalhilal.healthifyapp.data.model.CaloriePredictionResponse
+import com.naufalhilal.healthifyapp.data.model.CheckDiaryRequest
+import com.naufalhilal.healthifyapp.data.model.CheckDiaryResponse
+import com.naufalhilal.healthifyapp.data.model.DiaryWithFoodNames
+import com.naufalhilal.healthifyapp.data.model.FoodRecommendationRequest
+import com.naufalhilal.healthifyapp.data.model.FoodRecommendationResponse
+import com.naufalhilal.healthifyapp.data.model.HealthDataResponse
+import com.naufalhilal.healthifyapp.data.model.ResponseMessage
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -13,52 +21,58 @@ import retrofit2.http.Path
 
 interface ApiService {
 
-    @GET("diary/{id}")
-    suspend fun getDiaryById(@Path("id") id: Int): Response<Diary>
+    // Get all foods
+    @GET("food")
+    suspend fun getAllFoods(): List<Food>
 
-    @GET("diary/user/{userId}")
-    suspend fun getDiariesByUserId(@Path("userId") userId: Int): Response<List<Diary>>
-
-    @POST("diary")
-    suspend fun insertDiary(@Body diary: Diary): Response<Void>
-
-    // EatTime Endpoints
-    @GET("eat-time/{id}")
-    suspend fun getEatTimeById(@Path("id") id: Int): Response<EatTime>
-
-    @GET("eat-time/diary/{diaryId}")
-    suspend fun getEatTimesByDiaryId(@Path("diaryId") diaryId: Int): Response<List<EatTime>>
-
-    @POST("eat-time")
-    suspend fun insertEatTime(@Body eatTime: EatTime): Response<Void>
-
-    // Food Endpoints
+    // Get food by ID
     @GET("food/{id}")
-    suspend fun getFoodById(@Path("id") id: Int): Response<Food>
+    suspend fun getFoodById(@Path("id") id: Int): Food
 
-    @GET("food/user/{userId}")
-    suspend fun getFoodsByUserId(@Path("userId") userId: Int): Response<List<Food>>
+    // Get all diaries
+    @GET("diary")
+    suspend fun getAllDiaries(): List<Diary>
 
-    @POST("food")
-    suspend fun insertFood(@Body food: Food): Response<Void>
+    // Get diary by ID
+    @GET("diary/{id}")
+    suspend fun getDiaryById(@Path("id") id: Int): Diary
 
-    // HealthData Endpoints
+    // Get diary by ID with food names
+    @GET("diary/diaryId/{id}")
+    suspend fun getDiaryWithFoodNamesById(@Path("id") id: Int): DiaryWithFoodNames
+
+    // Get all eat-time
+    @GET("eat-time")
+    suspend fun getAllEatTimes(): List<EatTime>
+
+    // Get eat-time by ID
+    @GET("eat-time/{id}")
+    suspend fun getEatTimeById(@Path("id") id: Int): EatTime
+
+    // Get all health data
+    @GET("health-data")
+    suspend fun getAllHealthDataResponse(): HealthDataResponse
+
+    // Get health data by ID
     @GET("health-data/{id}")
-    suspend fun getHealthDataById(@Path("id") id: Int): Response<HealthData>
+    suspend fun getHealthDataById(@Path("id") id: Int): HealthData
 
-    @GET("health-data/user/{userId}")
-    suspend fun getHealthDataByUserId(@Path("userId") userId: Int): Response<List<HealthData>>
+    // Get DiaryID based on selected date and user ID
+    @POST("diary/checkDiary")
+    suspend fun checkDiary(@Body request: CheckDiaryRequest): CheckDiaryResponse
 
-    @POST("health-data")
-    suspend fun insertHealthData(@Body healthData: HealthData): Response<Void>
+    // Add food
+    @POST("food")
+    suspend fun addFood(@Body food: Food): ResponseMessage
 
-    // User Endpoints
-    @GET("user/{id}")
-    suspend fun getUserById(@Path("id") id: Int): Response<User>
+    // Add user food to the user diary for that day
+    @POST("food/addToDiary")
+    suspend fun addToDiary(@Body request: AddToDiaryRequest): ResponseMessage
 
-    @GET("user/username/{username}")
-    suspend fun getUserByUsername(@Path("username") username: String): Response<User?>
+    @POST("predict")
+    suspend fun predictCalories(@Body request: CaloriePredictionRequest): CaloriePredictionResponse
 
-    @POST("user")
-    suspend fun insertUser(@Body user: User): Response<Void>
+    // Food Recommendation Model API
+    @POST("recommend_foods")
+    suspend fun recommendFoods(@Body request: FoodRecommendationRequest): FoodRecommendationResponse
 }
