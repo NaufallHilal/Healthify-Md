@@ -1,10 +1,12 @@
-package com.naufalhilal.healthifyapp.data.entity
+package com.naufalhilal.healthifyapp.data.local.entity
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "eat_time",
@@ -26,6 +28,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [Index("diary_id"), Index("food_id")]
 )
+@Parcelize
 data class EatTime(
     @PrimaryKey(autoGenerate = true)
     val eat_time_id: Int = 0,
@@ -38,8 +41,5 @@ data class EatTime(
 
     @ColumnInfo(name = "eat_time")
     val eat_time: String,
-
-    @ColumnInfo(name = "food_name")
-    val food_name: String
-)
+) : Parcelable
 
