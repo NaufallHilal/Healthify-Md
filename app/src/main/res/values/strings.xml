@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Healthify App</string>
+    <string name="edt_email_hint">Masukkan email anda</string>
+    <string name="invalid_email">Alamat email tidak sah</string>
+    <string name="edt_password_hint">Masukkan password anda</string>
+    <string name="invalid_password">Kata sandi tidak boleh kurang dari 8 karakter</string>
 </resources>
