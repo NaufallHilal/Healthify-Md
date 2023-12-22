@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -27,7 +26,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,15 +44,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import com.naufalhilal.healthifyapp.data.response.CheckDiaryResponse
 import com.naufalhilal.healthifyapp.data.response.CreateDiaryResponse
 import com.naufalhilal.healthifyapp.data.response.GetFoodInDiaryResponse
 import com.naufalhilal.healthifyapp.data.response.HealthDataResponse
 import com.naufalhilal.healthifyapp.di.injection
 import com.naufalhilal.healthifyapp.ui.ViewModelFactory
-import com.naufalhilal.healthifyapp.ui.common.UiState
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -80,6 +75,12 @@ fun DairyScreen (modifier: Modifier=Modifier
     var foodFromDiary by remember { mutableStateOf(GetFoodInDiaryResponse()) }
     foodFromDiary = viewModel.uiStateGetFoodFromDiary.collectAsState().value
 
+    var caloriesSarapan by remember { mutableStateOf(0) }
+    var caloriesLunch by remember { mutableStateOf(0) }
+    var caloriesDinner by remember { mutableStateOf(0) }
+    var totalCaloriesFood by remember { mutableStateOf(0) }
+    totalCaloriesFood = caloriesSarapan+caloriesLunch+caloriesDinner
+
     viewModel.getSession()
     viewModel.session.collectAsState().value.let {
         userId=it.userId
@@ -92,6 +93,11 @@ fun DairyScreen (modifier: Modifier=Modifier
     }
     if (checkDiary.diaryId!=null){
         viewModel.getFoodFromDiary(checkDiary.diaryId!!)
+    }
+    if (foodFromDiary.message=="Diary with food names and calories fetched successfully"){
+        caloriesDinner=foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Dinner" }?.sumBy { it?.calories?:0 }!!
+        caloriesLunch=foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Lunch" }?.sumBy { it?.calories?:0 }!!
+        caloriesSarapan=foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Sarapan" }?.sumBy { it?.calories?:0 }!!
     }
     if (healthData.message!=null && checkDiary.message!=null){
         isLoading=false
@@ -164,7 +170,7 @@ fun DairyScreen (modifier: Modifier=Modifier
             }
             //calories info
             HomeSection(title = "Sisa Kalori") {
-                CalorieInfo(calories = healthData.healthDataDetails?.calories)
+                CalorieInfo(calories = healthData.healthDataDetails?.calories, caloriesFood = totalCaloriesFood)
             }
             Divider(
                 modifier = modifier.padding(horizontal = 12.dp),
@@ -191,18 +197,18 @@ fun DairyScreen (modifier: Modifier=Modifier
                             modifier=modifier
                                 .padding(horizontal = 16.dp, vertical = 8.dp))
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "0",modifier=modifier
+                        Text(text = caloriesSarapan.toString(),modifier=modifier
                             .padding( top = 16.dp, end = 16.dp))
 
                     }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
                     if (it?.eatTime=="Sarapan"){
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp),modifier = modifier.padding( top = 8.dp)) {
                             Text(text = it.foodName.toString(),
                                 modifier=modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp))
                             Spacer(modifier = Modifier.weight(1f))
-                            Text(text = "0",modifier=modifier
+                            Text(text = it.calories.toString(),modifier=modifier
                                 .padding( horizontal = 16.dp, vertical = 8.dp))
                         }
                     }
@@ -221,18 +227,18 @@ fun DairyScreen (modifier: Modifier=Modifier
                         modifier=modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp))
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "0",modifier=modifier
+                    Text(text = caloriesLunch.toString(),modifier=modifier
                         .padding( top = 16.dp, end = 16.dp))
 
                 }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
                     if (it?.eatTime=="Lunch"){
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp),modifier = modifier.padding( top = 8.dp)) {
                             Text(text = it.foodName.toString(),
                                 modifier=modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp))
                             Spacer(modifier = Modifier.weight(1f))
-                            Text(text = "0",modifier=modifier
+                            Text(text = it.calories.toString(),modifier=modifier
                                 .padding( horizontal = 16.dp, vertical = 8.dp))
                         }
                     }
@@ -251,11 +257,11 @@ fun DairyScreen (modifier: Modifier=Modifier
                         modifier=modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp))
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "0",modifier=modifier
+                    Text(text = caloriesDinner.toString(),modifier=modifier
                         .padding( top = 16.dp, end = 16.dp))
 
                 }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
                     if (it?.eatTime == "Dinner") {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp),modifier = modifier.padding( top = 8.dp)) {
                             Text(
@@ -265,7 +271,7 @@ fun DairyScreen (modifier: Modifier=Modifier
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "0", modifier = modifier
+                                text = it.calories.toString(), modifier = modifier
                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
@@ -320,7 +326,11 @@ fun SectionText(
 
 
 @Composable
-fun CalorieInfo(modifier: Modifier = Modifier,calories:Int?){
+fun CalorieInfo(modifier: Modifier = Modifier,calories:Int?,caloriesFood:Int){
+    var sisaCalories=""
+    if (calories!=null){
+        sisaCalories = (calories-caloriesFood).toString()
+    }
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier ) {
@@ -349,7 +359,7 @@ fun CalorieInfo(modifier: Modifier = Modifier,calories:Int?){
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "N/A", fontSize = 24.sp,)
+                Text(text = caloriesFood.toString(), fontSize = 24.sp,)
                 Text(text = "Makanan", fontSize = 16.sp,style = TextStyle(color = Color.Gray), modifier= Modifier.paddingFromBaseline(top = 16.dp, bottom = 8.dp))
             }
         }
@@ -368,7 +378,7 @@ fun CalorieInfo(modifier: Modifier = Modifier,calories:Int?){
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = calories.toString(), fontSize = 24.sp,style = TextStyle(fontWeight = FontWeight.ExtraBold))
+                Text(text = if (sisaCalories!="") sisaCalories else calories.toString(), fontSize = 24.sp,style = TextStyle(fontWeight = FontWeight.ExtraBold))
                 Text(text = "Sisa", fontSize = 16.sp,style = TextStyle(color = Color.Gray), modifier= Modifier.paddingFromBaseline(top = 16.dp, bottom = 8.dp))
             }
         }

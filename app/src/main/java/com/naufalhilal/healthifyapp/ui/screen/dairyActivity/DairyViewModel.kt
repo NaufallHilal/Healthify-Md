@@ -12,7 +12,6 @@ import com.naufalhilal.healthifyapp.data.response.CreateDiaryResponse
 import com.naufalhilal.healthifyapp.data.response.GetFoodInDiaryResponse
 import com.naufalhilal.healthifyapp.data.response.HealthDataResponse
 import com.naufalhilal.healthifyapp.data.retrofit.ApiConfig
-import com.naufalhilal.healthifyapp.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
