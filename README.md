@@ -18,9 +18,11 @@ Our Member :
 
 
 
+
 Healthify
 
 Healthify serves as a mobile app that assists users in achieving their health goals by providing them with a personalized experience.
+
 
 Development Roadmap
 
@@ -35,6 +37,7 @@ Hilt Dagger
 Jetpack Compose
 
 Navigation Component
+
 
 
 Features
@@ -58,6 +61,8 @@ Profile Dashboard
 Food Recommendation
 
 User Health Tracking
+
+
 
 Requirement
 
