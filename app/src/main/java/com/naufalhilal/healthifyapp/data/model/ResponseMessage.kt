@@ -1,21 +1,36 @@
 package com.naufalhilal.healthifyapp.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class ResponseMessage(
     val error: Boolean? = null,
     val message: String? = null
 )
 
-data class CheckDiaryRequest(
-    val user_id: Int? = null,
-    val diary_date: String? = null
+data class CheckDiaryResponse(
+
+    @field:SerializedName("error")
+    val error: Boolean? = null,
+
+    @field:SerializedName("message")
+    val message: String? = null,
+
+    @field:SerializedName("diary_id")
+    val diaryId: Int? = null
 )
 
-data class CheckDiaryResponse(
+data class CreateDiaryResponse(
+
+    @field:SerializedName("error")
     val error: Boolean? = null,
+
+    @field:SerializedName("message")
     val message: String? = null,
-    val diaryId: Int? = null,
-    val diaryDetails: Any? = null
+
+    @field:SerializedName("diary_id")
+    val diaryId: Int? = null
 )
+
 
 data class AddFoodToDiaryData(
     val diary_id: Int? = null,
@@ -23,19 +38,42 @@ data class AddFoodToDiaryData(
     val eat_time: String? = null
 )
 
-data class DiaryWithFoodNames(
+data class GetFoodInDiaryResponse(
+
+    @field:SerializedName("diaryDetailsWithFoodAndCalories")
+    val diaryDetailsWithFoodAndCalories: List<DiaryDetailsWithFoodAndCaloriesItem?>? = null,
+
+    @field:SerializedName("error")
     val error: Boolean? = null,
-    val message: String? = null,
-    val diaryDetailsWithFood: List<DiaryDetailWithFood>? = null
+
+    @field:SerializedName("message")
+    val message: String? = null
 )
 
-data class DiaryDetailWithFood(
-    val eat_time_id: Int? = null,
-    val diary_id: Int? = null,
-    val food_id: Int? = null,
-    val eat_time: String? = null,
-    val food_name: String? = null,
-    val calories: Int? = null
+data class DiaryDetailsWithFoodAndCaloriesItem(
+
+    @field:SerializedName("food_name")
+    val foodName: String? = null,
+
+    @field:SerializedName("eat_time")
+    val eatTime: String? = null,
+
+    @field:SerializedName("eat_time_id")
+    val eatTimeId: Int? = null,
+
+    @field:SerializedName("calories")
+    val calories: Int? = null,
+
+    @field:SerializedName("food_id")
+    val foodId: Int? = null,
+
+    @field:SerializedName("diary_id")
+    val diaryId: Int? = null
+)
+
+data class CheckDiaryData(
+    val user_id: Int,
+    val diary_date: String
 )
 
 data class WeightEntry(

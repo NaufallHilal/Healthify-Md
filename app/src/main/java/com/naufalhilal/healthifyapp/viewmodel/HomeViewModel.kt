@@ -25,6 +25,13 @@ class HomeViewModel @Inject constructor(
     private val _weightsFlow = MutableStateFlow<List<Float>>(emptyList())
     val weightsFlow: StateFlow<List<Float>> get() = _weightsFlow
 
+    private val _totalCaloriesFood = MutableStateFlow(0)
+    val totalCaloriesFood: StateFlow<Int> get() = _totalCaloriesFood
+
+    fun updateTotalCaloriesFood(calories: Int) {
+        _totalCaloriesFood.value = calories
+    }
+
     fun fetchWeights(day: Int) {
         viewModelScope.launch {
             preferencesDataSource.getWeight(day).collect { fetchedWeights ->
@@ -56,6 +63,7 @@ class HomeViewModel @Inject constructor(
     fun saveExerciseCalories(exercise: Int) {
         viewModelScope.launch {
             preferencesDataSource.saveExerciseCalories(exercise)
+            _exerciseCaloriesState.value = exercise
         }
     }
 

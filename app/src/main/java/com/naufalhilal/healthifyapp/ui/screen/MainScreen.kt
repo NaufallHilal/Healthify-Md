@@ -76,7 +76,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
                             HomeScreen(
                                 navController = navController,
                                 paddingValues = paddingValues,
-                                viewModel = viewModel
+                                homeViewModel = viewModel
                             )
                         }
                         composable(NavigationItem.Diary.route) {

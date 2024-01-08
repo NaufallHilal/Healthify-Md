@@ -45,7 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.naufalhilal.healthifyapp.data.model.CheckDiaryResponse
-import com.naufalhilal.healthifyapp.data.model.DiaryWithFoodNames
+import com.naufalhilal.healthifyapp.data.model.CreateDiaryResponse
+import com.naufalhilal.healthifyapp.data.model.GetFoodInDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.HealthDataResponse
 import com.naufalhilal.healthifyapp.viewmodel.DiaryViewModel
 import java.time.DayOfWeek
@@ -56,11 +57,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DiaryScreen(
-    modifier: Modifier = Modifier,
-    navigateToAddFood: (String, Int) -> Unit,
-    viewModel: DiaryViewModel = hiltViewModel()
-) {
+fun DiaryScreen(modifier: Modifier = Modifier, navigateToAddFood: (String, Int) -> Unit) {
+
+    val viewModel: DiaryViewModel = hiltViewModel()
     var checkDate by remember { mutableStateOf(LocalDate.now().toString()) }
     var isLoading by remember { mutableStateOf(true) }
     var healthData by remember { mutableStateOf(HealthDataResponse()) }
@@ -68,10 +67,17 @@ fun DiaryScreen(
     var checkDiary by remember { mutableStateOf(CheckDiaryResponse()) }
     checkDiary = viewModel.uiStateCheckDiary.collectAsState().value
     var userId by remember { mutableStateOf(0) }
-    var createDiary by remember { mutableStateOf(CheckDiaryResponse()) }
+    var createDiary by remember { mutableStateOf(CreateDiaryResponse()) }
     createDiary = viewModel.uiStateCreateDiary.collectAsState().value
-    var foodFromDiary by remember { mutableStateOf(DiaryWithFoodNames()) }
+    var foodFromDiary by remember { mutableStateOf(GetFoodInDiaryResponse()) }
     foodFromDiary = viewModel.uiStateGetFoodFromDiary.collectAsState().value
+
+    var caloriesSarapan by remember { mutableStateOf(0) }
+    var caloriesLunch by remember { mutableStateOf(0) }
+    var caloriesDinner by remember { mutableStateOf(0) }
+    var totalCaloriesFood by remember { mutableStateOf(0) }
+    totalCaloriesFood = caloriesSarapan + caloriesLunch + caloriesDinner
+    var isDiaryLoading by remember { mutableStateOf(false) }
 
     viewModel.getSession()
     viewModel.session.collectAsState().value.let {
@@ -80,11 +86,29 @@ fun DiaryScreen(
             viewModel.getHealthDataFromUserId(it.userId)
         }
         LaunchedEffect(key1 = it.userId, key2 = checkDate, key3 = createDiary.diaryId) {
-            viewModel.checkDiary(it.userId, checkDate)
+            isDiaryLoading = true
+            viewModel.checkDiary(it.userId, checkDate) {
+                if (it.diaryId != null || checkDiary.message != null) {
+                    isDiaryLoading = false
+                }
+            }
         }
     }
     if (checkDiary.diaryId != null) {
         viewModel.getFoodFromDiary(checkDiary.diaryId!!)
+    }
+    if (foodFromDiary.message == "Diary with food names and calories fetched successfully") {
+        caloriesDinner =
+            foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Dinner" }
+                ?.sumOf {
+                    it?.calories ?: 0
+                }!!
+        caloriesLunch =
+            foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Lunch" }
+                ?.sumOf { it?.calories ?: 0 }!!
+        caloriesSarapan =
+            foodFromDiary.diaryDetailsWithFoodAndCalories?.filter { it?.eatTime == "Sarapan" }
+                ?.sumOf { it?.calories ?: 0 }!!
     }
     if (healthData.message != null && checkDiary.message != null) {
         isLoading = false
@@ -178,13 +202,19 @@ fun DiaryScreen(
             }
             //calories info
             HomeSection(title = "Sisa Kalori") {
-                CalorieInfo(calories = healthData.healthDataList?.calories)
+                CalorieInfo(
+                    calories = healthData.healthDataDetails?.calories,
+                    caloriesFood = totalCaloriesFood
+                )
             }
             Divider(
                 modifier = modifier.padding(horizontal = 12.dp),
                 color = Color(red = 0, green = 47, blue = 46)
             )
             //diary and eatTime
+            if (isDiaryLoading) {
+                CircularProgressIndicator()
+            }
             if (checkDiary.message == "Diary not found for the given user and date") {
                 Box(
                     modifier = modifier
@@ -192,14 +222,23 @@ fun DiaryScreen(
                         .padding(top = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Button(onClick = {
-                        viewModel.createDiary(
-                            userId = userId,
-                            date = checkDate,
-                            calories = healthData.healthDataList?.calories!!
-                        )
-                    }) {
+                    Button(
+                        enabled = healthData.healthDataDetails?.calories != null,
+                        onClick = {
+                            viewModel.createDiary(
+                                userId = userId,
+                                date = checkDate,
+                                calories = healthData.healthDataDetails?.calories!!
+                            )
+                        }) {
                         Text(text = "Create Diary")
+                    }
+                    if (healthData.healthDataDetails?.calories == null) {
+                        Text(
+                            text = "*Silahkan lengkapi data kesehatan",
+                            color = Color.Red,
+                            modifier = modifier.padding(top = 64.dp)
+                        )
                     }
                 }
             } else {
@@ -216,25 +255,25 @@ fun DiaryScreen(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "0", modifier = modifier
+                        text = caloriesSarapan.toString(), modifier = modifier
                             .padding(top = 16.dp, end = 16.dp)
                     )
 
                 }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
-                    if (it.eat_time == "Sarapan") {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
+                    if (it?.eatTime == "Sarapan") {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = modifier.padding(top = 8.dp)
                         ) {
                             Text(
-                                text = it.food_name.toString(),
+                                text = it.foodName.toString(),
                                 modifier = modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "0", modifier = modifier
+                                text = it.calories.toString(), modifier = modifier
                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
@@ -251,7 +290,6 @@ fun DiaryScreen(
                     modifier = modifier.padding(horizontal = 12.dp),
                     color = Color(red = 0, green = 47, blue = 46)
                 )
-//////////////////
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = modifier.padding(top = 8.dp)
@@ -265,25 +303,25 @@ fun DiaryScreen(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "0", modifier = modifier
+                        text = caloriesLunch.toString(), modifier = modifier
                             .padding(top = 16.dp, end = 16.dp)
                     )
 
                 }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
-                    if (it.eat_time == "Lunch") {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
+                    if (it?.eatTime == "Lunch") {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = modifier.padding(top = 8.dp)
                         ) {
                             Text(
-                                text = it.food_name.toString(),
+                                text = it.foodName.toString(),
                                 modifier = modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "0", modifier = modifier
+                                text = it.calories.toString(), modifier = modifier
                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
@@ -314,25 +352,25 @@ fun DiaryScreen(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "0", modifier = modifier
+                        text = caloriesDinner.toString(), modifier = modifier
                             .padding(top = 16.dp, end = 16.dp)
                     )
 
                 }
-                foodFromDiary.diaryDetailsWithFood?.forEach {
-                    if (it.eat_time == "Dinner") {
+                foodFromDiary.diaryDetailsWithFoodAndCalories?.forEach {
+                    if (it?.eatTime == "Dinner") {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = modifier.padding(top = 8.dp)
                         ) {
                             Text(
-                                text = it.food_name.toString(),
+                                text = it.foodName.toString(),
                                 modifier = modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "0", modifier = modifier
+                                text = it.calories.toString(), modifier = modifier
                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
@@ -394,7 +432,11 @@ fun SectionText(
 
 
 @Composable
-fun CalorieInfo(modifier: Modifier = Modifier, calories: Int?) {
+fun CalorieInfo(modifier: Modifier = Modifier, calories: Int?, caloriesFood: Int) {
+    var sisaCalories = ""
+    if (calories != null) {
+        sisaCalories = (calories - caloriesFood).toString()
+    }
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -430,7 +472,7 @@ fun CalorieInfo(modifier: Modifier = Modifier, calories: Int?) {
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "N/A", fontSize = 24.sp)
+                Text(text = caloriesFood.toString(), fontSize = 24.sp)
                 Text(
                     text = "Makanan",
                     fontSize = 16.sp,
@@ -455,7 +497,7 @@ fun CalorieInfo(modifier: Modifier = Modifier, calories: Int?) {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = calories.toString(),
+                    text = if (sisaCalories != "") sisaCalories else calories.toString(),
                     fontSize = 24.sp,
                     style = TextStyle(fontWeight = FontWeight.ExtraBold)
                 )

@@ -1,5 +1,6 @@
 package com.naufalhilal.healthifyapp.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,6 +46,7 @@ fun EditProfileScreen(navController: NavController, paddingValues: PaddingValues
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var isSnackbarVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -60,7 +62,13 @@ fun EditProfileScreen(navController: NavController, paddingValues: PaddingValues
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { /* TODO: Implement change picture logic */ },
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "To Be Implemented",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = SurfaceContainer)
             ) {
@@ -89,7 +97,11 @@ fun EditProfileScreen(navController: NavController, paddingValues: PaddingValues
 
             Button(
                 onClick = {
-                    // TODO: Implement edit profile logic
+                    Toast.makeText(
+                        context,
+                        "To Be Implemented",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = SurfaceContainer)
@@ -139,18 +151,3 @@ fun ImageEditProfile() {
             .border(width = 2.dp, color = PurpleGrey40, shape = CircleShape)
     )
 }
-
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun EditProfileScreen() {
-    HealthifyAppTheme {
-        EditProfileScreen(
-            navController = NavController(LocalContext.current),
-            paddingValues = PaddingValues(16.dp)
-        )
-    }
-}
-*/
-

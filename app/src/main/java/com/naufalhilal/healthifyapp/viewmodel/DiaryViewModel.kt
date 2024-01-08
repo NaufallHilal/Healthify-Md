@@ -3,10 +3,11 @@ package com.naufalhilal.healthifyapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naufalhilal.healthifyapp.data.api.ApiConfig
-import com.naufalhilal.healthifyapp.data.model.CheckDiaryRequest
+import com.naufalhilal.healthifyapp.data.model.CheckDiaryData
 import com.naufalhilal.healthifyapp.data.model.CheckDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.CreateDiaryData
-import com.naufalhilal.healthifyapp.data.model.DiaryWithFoodNames
+import com.naufalhilal.healthifyapp.data.model.CreateDiaryResponse
+import com.naufalhilal.healthifyapp.data.model.GetFoodInDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.HealthDataResponse
 import com.naufalhilal.healthifyapp.data.model.UserModel
 import com.naufalhilal.healthifyapp.data.repository.HealthifyRepo
@@ -19,9 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(private val repository: HealthifyRepo) : ViewModel() {
-
-    private val _uiStateHealthData: MutableStateFlow<HealthDataResponse> =
-        MutableStateFlow(HealthDataResponse())
+    private val _uiStateHealthData: MutableStateFlow<HealthDataResponse> = MutableStateFlow(
+        HealthDataResponse()
+    )
     val uiStateHealthData: StateFlow<HealthDataResponse>
         get() = _uiStateHealthData
 
@@ -31,15 +32,19 @@ class DiaryViewModel @Inject constructor(private val repository: HealthifyRepo) 
     val uiStateCheckDiary: StateFlow<CheckDiaryResponse>
         get() = _uiStateCheckDiary
 
-    private val _uiStateCreateDiary: MutableStateFlow<CheckDiaryResponse> =
-        MutableStateFlow(CheckDiaryResponse())
-    val uiStateCreateDiary: StateFlow<CheckDiaryResponse>
+    private val _uiStateCreateDiary: MutableStateFlow<CreateDiaryResponse> = MutableStateFlow(
+        CreateDiaryResponse()
+    )
+    val uiStateCreateDiary: StateFlow<CreateDiaryResponse>
         get() = _uiStateCreateDiary
 
-    private val _uiStateGetFoodFromDiary: MutableStateFlow<DiaryWithFoodNames> =
-        MutableStateFlow(DiaryWithFoodNames())
-    val uiStateGetFoodFromDiary: StateFlow<DiaryWithFoodNames>
+    private val _uiStateGetFoodFromDiary: MutableStateFlow<GetFoodInDiaryResponse> =
+        MutableStateFlow(
+            GetFoodInDiaryResponse()
+        )
+    val uiStateGetFoodFromDiary: StateFlow<GetFoodInDiaryResponse>
         get() = _uiStateGetFoodFromDiary
+
 
     private val _session: MutableStateFlow<UserModel> =
         MutableStateFlow(UserModel("", "", 0, false))
@@ -69,14 +74,16 @@ class DiaryViewModel @Inject constructor(private val repository: HealthifyRepo) 
         }
     }
 
-    fun checkDiary(userId: Int, date: String) {
-        val checkDiaryData = CheckDiaryRequest(user_id = userId, diary_date = date)
+    suspend fun checkDiary(userId: Int, date: String, callback: (CheckDiaryResponse) -> Unit) {
+        val checkDiaryData = CheckDiaryData(user_id = userId, diary_date = date)
         viewModelScope.launch {
             try {
                 _uiStateCheckDiary.value = ApiConfig.getApiService().checkDiary(checkDiaryData)
+                callback(_uiStateCheckDiary.value)
             } catch (e: Exception) {
                 _uiStateCheckDiary.value =
                     CheckDiaryResponse(message = e.message.toString(), error = true)
+                callback(_uiStateCheckDiary.value)
             }
         }
     }
@@ -89,7 +96,7 @@ class DiaryViewModel @Inject constructor(private val repository: HealthifyRepo) 
                 _uiStateCreateDiary.value = ApiConfig.getApiService().createDiary(createDiaryData)
             } catch (e: Exception) {
                 _uiStateCreateDiary.value =
-                    CheckDiaryResponse(message = e.message.toString(), error = true)
+                    CreateDiaryResponse(message = e.message.toString(), error = true)
             }
         }
     }
@@ -101,7 +108,7 @@ class DiaryViewModel @Inject constructor(private val repository: HealthifyRepo) 
                 _uiStateGetFoodFromDiary.value = ApiConfig.getApiService().getFoodInDiary(endpoint)
             } catch (e: Exception) {
                 _uiStateGetFoodFromDiary.value =
-                    DiaryWithFoodNames(message = e.message.toString(), error = true)
+                    GetFoodInDiaryResponse(message = e.message.toString(), error = true)
             }
         }
     }

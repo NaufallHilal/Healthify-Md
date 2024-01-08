@@ -7,8 +7,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class HealthDataResponse(
 
-    @field:SerializedName("healthDataList")
-    val healthDataList: HealthDataListItem? = null,
+    @field:SerializedName("healthDataDetails")
+    val healthDataDetails: HealthDataDetails? = null,
 
     @field:SerializedName("error")
     val error: Boolean? = null,
@@ -18,7 +18,7 @@ data class HealthDataResponse(
 ) : Parcelable
 
 @Parcelize
-data class HealthDataListItem(
+data class HealthDataDetails(
 
     @field:SerializedName("health_data_id")
     val healthDataId: Int? = null,
@@ -41,3 +41,4 @@ data class HealthDataListItem(
     @field:SerializedName("height")
     val height: Int? = null
 ) : Parcelable
+

@@ -7,14 +7,15 @@ import com.naufalhilal.healthifyapp.data.local.entity.HealthData
 import com.naufalhilal.healthifyapp.data.model.AddFoodToDiaryData
 import com.naufalhilal.healthifyapp.data.model.CaloriePredictionRequest
 import com.naufalhilal.healthifyapp.data.model.CaloriePredictionResponse
-import com.naufalhilal.healthifyapp.data.model.CheckDiaryRequest
+import com.naufalhilal.healthifyapp.data.model.CheckDiaryData
 import com.naufalhilal.healthifyapp.data.model.CheckDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.CreateDiaryData
+import com.naufalhilal.healthifyapp.data.model.CreateDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.CreateFoodData
-import com.naufalhilal.healthifyapp.data.model.DiaryWithFoodNames
 import com.naufalhilal.healthifyapp.data.model.FoodRecommendationRequest
 import com.naufalhilal.healthifyapp.data.model.FoodRecommendationResponse
 import com.naufalhilal.healthifyapp.data.model.FoodResponse
+import com.naufalhilal.healthifyapp.data.model.GetFoodInDiaryResponse
 import com.naufalhilal.healthifyapp.data.model.HealthDataResponse
 import com.naufalhilal.healthifyapp.data.model.LoginData
 import com.naufalhilal.healthifyapp.data.model.LoginResponse
@@ -51,7 +52,7 @@ interface ApiService {
     @GET
     suspend fun getFoodInDiary(
         @Url url: String,
-    ): DiaryWithFoodNames
+    ): GetFoodInDiaryResponse
 
     // Get all eat-time
     @GET("eat-time")
@@ -67,20 +68,22 @@ interface ApiService {
         @Url url: String,
     ): HealthDataResponse
 
-
     // Get health data by ID
     @GET("health-data/{id}")
     suspend fun getHealthDataById(@Path("id") id: Int): HealthData
 
     // Get DiaryID based on selected date and user ID
+    @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("diary/checkDiary")
-    suspend fun checkDiary(@Body request: CheckDiaryRequest): CheckDiaryResponse
+    suspend fun checkDiary(
+        @Body chechDiaryData: CheckDiaryData
+    ): CheckDiaryResponse
 
     @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("diary")
     suspend fun createDiary(
         @Body createDiaryData: CreateDiaryData
-    ): CheckDiaryResponse
+    ): CreateDiaryResponse
 
     @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("food/addToDiary/")
