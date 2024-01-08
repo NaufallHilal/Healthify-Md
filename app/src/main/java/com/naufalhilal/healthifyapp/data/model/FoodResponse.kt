@@ -8,13 +8,16 @@ import kotlinx.parcelize.Parcelize
 data class FoodResponse(
 
     @field:SerializedName("listFoods")
-    val listFoods: List<List<ListFoodsItemItem?>?>? = null,
+    val listFoods: List<List<ListFoodsItemItem>>,
 
     @field:SerializedName("error")
     val error: Boolean? = null,
 
     @field:SerializedName("message")
-    val message: String? = null
+    val message: String? = null,
+
+    @field:SerializedName("foodDetails")
+    val foodDetails: ListFoodsItemItem? = null
 ) : Parcelable
 
 @Parcelize
@@ -22,6 +25,9 @@ data class ListFoodsItemItem(
 
     @field:SerializedName("food_name")
     val foodName: String? = null,
+
+    @field:SerializedName("user_id")
+    val userId: Int? = null,
 
     @field:SerializedName("protein")
     val protein: Int? = null,

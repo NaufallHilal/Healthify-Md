@@ -3,7 +3,8 @@ package com.naufalhilal.healthifyapp.data.repository
 import com.naufalhilal.healthifyapp.data.api.ApiService
 import com.naufalhilal.healthifyapp.data.local.database.AppDatabase
 import com.naufalhilal.healthifyapp.data.local.entity.Food
-import com.naufalhilal.healthifyapp.data.model.AddToDiaryRequest
+import com.naufalhilal.healthifyapp.data.model.AddFoodToDiaryData
+import com.naufalhilal.healthifyapp.data.model.FoodResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -45,16 +46,16 @@ class FoodRepo @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun fetchAllFoodsFromApi(): List<Food> {
+    suspend fun fetchAllFoodsFromApi(): FoodResponse {
         return apiService.getAllFoods()
     }
 
     suspend fun addFoodToDiary(diaryId: Int, foodId: Int, eatTime: String): Boolean {
         return try {
             val response = apiService.addToDiary(
-                AddToDiaryRequest(diaryId, foodId, eatTime)
+                AddFoodToDiaryData(diaryId, foodId, eatTime)
             )
-            !response.error
+            !response.error!!
         } catch (e: Exception) {
             false
         }

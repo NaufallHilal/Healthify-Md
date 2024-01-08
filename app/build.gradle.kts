@@ -18,7 +18,7 @@ android {
         )
 
         applicationId = "com.naufalhilal.healthifyapp"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -87,8 +87,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
@@ -105,4 +105,6 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-fragment:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
 }

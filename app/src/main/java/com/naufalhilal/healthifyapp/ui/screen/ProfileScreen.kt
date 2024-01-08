@@ -1,5 +1,6 @@
 package com.naufalhilal.healthifyapp.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -31,9 +33,15 @@ import com.naufalhilal.healthifyapp.ui.theme.HealthifyAppTheme
 import com.naufalhilal.healthifyapp.ui.theme.Primary40
 import com.naufalhilal.healthifyapp.ui.theme.PurpleGrey40
 import com.naufalhilal.healthifyapp.ui.theme.SurfaceContainer
+import com.naufalhilal.healthifyapp.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfileScreen(navController: NavController, paddingValues: PaddingValues) {
+fun ProfileScreen(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +78,13 @@ fun ProfileScreen(navController: NavController, paddingValues: PaddingValues) {
                 )
             }
             Button(
-                onClick = { /* TODO: Action */ },
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "To Be Implemented",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .fillMaxWidth(0.5f),

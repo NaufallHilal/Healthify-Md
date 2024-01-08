@@ -50,7 +50,7 @@ fun HomeScreen(
     ) {
         item {
             val exerciseCalories by viewModel.exerciseCaloriesState.collectAsState()
-            HealthStatusCard(5000, 90, exerciseCalories ?: 0)
+            HealthStatusCard(5000, 200, exerciseCalories ?: 0)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)

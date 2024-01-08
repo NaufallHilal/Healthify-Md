@@ -50,7 +50,7 @@ class HealthDataRepo @Inject constructor(
 
     // Mendapatkan semua data kesehatan dari API
     suspend fun fetchAllHealthData(): HealthDataResponse {
-        return apiService.getAllHealthDataResponse()
+        return apiService.getHealthData(url = String())
     }
 
     // Mendapatkan data kesehatan berdasarkan ID dari API

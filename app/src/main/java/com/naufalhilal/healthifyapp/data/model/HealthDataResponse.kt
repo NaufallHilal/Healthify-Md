@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class HealthDataResponse(
 
     @field:SerializedName("healthDataList")
-    val healthDataList: List<HealthDataListItem?>? = null,
+    val healthDataList: HealthDataListItem? = null,
 
     @field:SerializedName("error")
     val error: Boolean? = null,
